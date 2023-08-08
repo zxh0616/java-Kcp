@@ -65,7 +65,7 @@ public class KcpServer {
         }else{
             channelManager = new ServerAddressChannelManager();
         }
-
+        //定时器，用于在指定的时间间隔后执行任务。
         hashedWheelTimer = new HashedWheelTimer(new TimerThreadFactory(),1, TimeUnit.MILLISECONDS);
 
 
@@ -110,6 +110,7 @@ public class KcpServer {
             }
         });
         //bootstrap.option(ChannelOption.SO_RCVBUF, 10*1024*1024);
+
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 

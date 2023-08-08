@@ -109,6 +109,7 @@ public class KcpClient {
         ChannelFuture channelFuture  = bootstrap.connect(remoteAddress,localAddress);
 
         //= bootstrap.bind(localAddress);
+        //阻塞当前线程，直到对应的操作完成为止，而且不会响应中断。
         ChannelFuture sync = channelFuture.syncUninterruptibly();
         NioDatagramChannel channel = (NioDatagramChannel) sync.channel();
         localAddress = channel.localAddress();

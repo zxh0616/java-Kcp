@@ -69,10 +69,24 @@ public class Kcp implements IKcp {
      */
     public static final int IKCP_ASK_TELL = 2;
 
+    /**
+     * IKCP_WND_SND 是 KCP 协议中的一个配置参数，用于设置发送窗口大小。
+     * 发送窗口是 KCP 协议用于控制发送数据量的一个缓冲区，它表示允许同时发送的未确认数据包的最大数量.
+     */
     public static final int IKCP_WND_SND = 32;
 
+ /**
+  * IKCP_WND_RCV 表示接收窗口的大小。接收窗口是 KCP 协议用于控制接收端的缓冲区大小，它表示接收端能够接收的未确认数据包的最大数量。
+  * 较大的接收窗口可以提高网络吞吐量，但也会增加接收端的内存消耗和网络拥塞的风险.
+  */
     public static final int IKCP_WND_RCV = 32;
 
+    /**
+     * MTU 表示在网络中能够传输的数据包的最大大小。
+     * 对于 KCP 协议来说，它需要将应用层的数据分割成较小的数据块，然后通过底层的传输协议（通常是 UDP）进行传输。
+     * 这些较小的数据块的大小不能超过 MTU 的大小，否则可能会导致数据包被分片，从而增加网络传输的开销。
+     * IKCP_MTU_DEF 是 KCP 协议中默认的 MTU 大小。
+     */
     public static final int IKCP_MTU_DEF = 1400;
 
     public static final int IKCP_INTERVAL = 100;

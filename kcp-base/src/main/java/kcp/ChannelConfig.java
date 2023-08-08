@@ -40,7 +40,8 @@ public class ChannelConfig {
     //增加ack包回复成功率 填 /8/16/32
     private int ackMaskSize = 0;
     /**
-     * 使用conv确定一个channel 还是使用 socketAddress确定一个channel
+     * 使用conv确定一个channel
+     * 还是使用 socketAddress确定一个channel
      **/
     private boolean useConvChannel = false;
     /**
