@@ -2,7 +2,6 @@ package kcp;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.util.Recycler;
 
 import java.util.List;
 
@@ -65,6 +64,13 @@ public interface IKcp {
      * Important to reduce unnacessary ikcp_update invoking. use it to
      * schedule ikcp_update (eg. implementing an epoll-like mechanism,
      * or optimize ikcp_update when handling massive kcp connections)
+     *
+     *
+     * 定何时应该调用ikcp_update：
+     * 如果没有ikcp_input_send调用，则以毫秒为单位返回何时调用ikcp_update。
+     * 您可以在该时间调用ikcp_update，而不是重复调用update。
+     * 重要的是要减少不必要的ikcp_update调用。
+     * 使用它来调度ikcp_update（例如，实现类似epoll的机制，或者在处理大量kcp连接时优化ikcp_uupdate）
      *
      * @param current
      * @return

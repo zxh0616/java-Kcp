@@ -102,45 +102,52 @@ public class Kcp implements IKcp {
      * 每隔多少时间发送一个数据包
      */
     public static final int IKCP_INTERVAL = 100;
+
+    /**
+     * "IKCP_OVERHEAD" 的值为 24 表示每个 KCP 数据包的额外开销为 24 字节。这些开销通常用于以下方面：
+     * <p>
+     * KCP 协议头： KCP 协议头包含一些必要的字段，如会话 ID、数据包序列号、确认号等，用于控制和管理数据包的传输和接收。
+     * 时间戳： 时间戳用于测量数据包的往返时间（Round-Trip Time，RTT），以便在拥塞控制和重传等方面进行调整。
+     * 窗口大小等信息： 数据包中可能会包含一些关于发送窗口大小、可用空间等信息，用于控制发送方的数据流量。
+     */
+    public int IKCP_OVERHEAD = 24;
+
     /**
      * 定义 KCP 协议中的死链检测阈值。
      * 如果在 20 个 ACK 之间没有收到对方的数据包，将认为链路已经断开。
      */
     public static final int IKCP_DEADLINK = 20;
+
     /**
      * KCP 协议的慢启动阈值初始值。
      * 当窗口大小小于此值时，使用拥塞避免算法；
      * 当窗口大小大于等于此值时，使用慢启动算法。
      */
     public static final int IKCP_THRESH_INIT = 2;
+
     /**
      * KCP 协议的最小慢启动阈值。
      * 如果慢启动阈值小于 2，将会被设置为 2。
      */
     public static final int IKCP_THRESH_MIN = 2;
+
     /**
      * 7 secs to probe window size
      * 初始的探测窗口大小的时间。即开始时的 7 秒内将探测窗口大小。
      */
     public static final int IKCP_PROBE_INIT = 7000;
+
     /**
      * up to 120 secs to probe window
      *  控制探测窗口大小的时间上限。探测窗口大小将在 2 分钟内逐渐增大，直到达到这个时间上限。
      */
     public static final int IKCP_PROBE_LIMIT = 120000;
+
     /**
      * 它表示在 KCP 数据包头部中序列号（Sequence Number）字段的偏移量。
      * 序列号的使用是为了保证数据传输的可靠性和顺序性
      */
     public static final int IKCP_SN_OFFSET   = 12;
-    /**
-     * "IKCP_OVERHEAD" 的值为 24 表示每个 KCP 数据包的额外开销为 24 字节。这些开销通常用于以下方面：
-     *
-     * KCP 协议头： KCP 协议头包含一些必要的字段，如会话 ID、数据包序列号、确认号等，用于控制和管理数据包的传输和接收。
-     * 时间戳： 时间戳用于测量数据包的往返时间（Round-Trip Time，RTT），以便在拥塞控制和重传等方面进行调整。
-     * 窗口大小等信息： 数据包中可能会包含一些关于发送窗口大小、可用空间等信息，用于控制发送方的数据流量。
-     */
-    public int IKCP_OVERHEAD = 24;
 
     private int ackMaskSize = 0;
     /**
@@ -834,7 +841,7 @@ public class Kcp implements IKcp {
                 this.rmtWnd = wnd ;//更新远端窗口大小删除已确认的包，una以前的包对方都收到了，可以把本地小于una的都删除掉
             }
 
-            //this.rmtWnd = wnd;
+            //this.rmtWnd = wnd; sndBuf >0  itimediff(una, seg.sn) > 0清空sndBufItr
             if(parseUna(una)>0)
             {
                 windowSlides = true;
@@ -1022,7 +1029,7 @@ public class Kcp implements IKcp {
         seg.conv = conv;
         seg.cmd = IKCP_CMD_ACK;
         seg.ackMaskSize=this.ackMaskSize;
-        //可接收数量  rcvWnd（接收窗口） - （收到后有序的队列）rcvQueue.size();
+        /**剩余接收窗口大小(接收窗口大小-接收队列大小)**/
         seg.wnd = wndUnused();
         //已接收数量，下次要接收的包的sn，这sn之前的包都已经收到
         seg.una = rcvNxt;
@@ -1246,7 +1253,7 @@ public class Kcp implements IKcp {
             }
         }
 
-        // flash remain segments
+        // flash remain segments   发送数据
         flushBuffer(buffer);
         seg.recycle(true);
 
@@ -1584,7 +1591,14 @@ public class Kcp implements IKcp {
     public static class Segment {
 
 
-        private final Recycler.Handle<Kcp.Segment> recyclerHandle;
+        private static final Recycler<Segment> RECYCLER = new Recycler<Segment>() {
+
+            @Override
+            protected Segment newObject(Handle<Segment> handle) {
+                return new Segment(handle);
+            }
+
+        };
         /**会话id**/
         private int conv;
         /**命令**/
@@ -1613,16 +1627,9 @@ public class Kcp implements IKcp {
         private ByteBuf data;
 
         private int ackMaskSize;
-        private static final Recycler<Kcp.Segment> RECYCLER = new Recycler<Kcp.Segment>() {
+        private final Recycler.Handle<Segment> recyclerHandle;
 
-            @Override
-            protected Segment newObject(Recycler.Handle<Segment> handle) {
-                return new Segment(handle);
-            }
-
-        };
-
-        private Segment(Recycler.Handle<Kcp.Segment> recyclerHandle) {
+        private Segment(Recycler.Handle<Segment> recyclerHandle) {
             this.recyclerHandle = recyclerHandle;
         }
 

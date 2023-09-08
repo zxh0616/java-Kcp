@@ -56,4 +56,9 @@ public class ClientConvChannelManager implements IChannelManager {
     public Collection<Ukcp> getAll() {
         return this.ukcpMap.values();
     }
+
+    @Override
+    public Map<Integer, Ukcp> getUkcpMap() {
+        return ukcpMap;
+    }
 }

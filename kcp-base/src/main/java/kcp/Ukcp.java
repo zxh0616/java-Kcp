@@ -28,6 +28,7 @@ public class Ukcp{
 
     private boolean fastFlush = true;
 
+    //tsUpdate是一个表示时间戳的变量
     private long tsUpdate = -1;
 
     private boolean active;
@@ -44,6 +45,10 @@ public class Ukcp{
     private final KcpListener kcpListener;
 
     private final long timeoutMillis;
+
+    public IChannelManager getChannelManager() {
+        return channelManager;
+    }
 
     private final IChannelManager channelManager;
 
@@ -234,6 +239,13 @@ public class Ukcp{
      */
     protected boolean canSend(boolean curCanSend) {
         int max = kcp.getSndWnd() * 2;
+        /**
+         *
+         * 发送后待确认的队列 private ReItrLinkedList<Kcp.Segment> sndBuf = new ReItrLinkedList<>();
+         * 待发送窗口窗口  private LinkedList<Kcp.Segment> sndQueue = new LinkedList<>();
+         *
+         * kcp.waitSnd()    return this.sndBuf.size() + this.sndQueue.size();
+         */
         int waitSnd = kcp.waitSnd();
         if (curCanSend) {
             return waitSnd < max;
@@ -372,7 +384,7 @@ public class Ukcp{
         }
         byteBuf = byteBuf.retainedDuplicate();
         writeBuffer.offer(byteBuf);
-        notifyWriteEvent();
+        notifyWriteEvent(); //通知写入事件
         return true;
     }
 
@@ -390,13 +402,17 @@ public class Ukcp{
     }
 
     private void notifyReadEvent() {
+        log.info("2023-09-08-readProcessing = {}", readProcessing.get());
         if(readProcessing.compareAndSet(false,true)){
+            log.info("2023-09-08-read-判断队列是否已经达到上限了----{}", this.iMessageExecutor.isFull());
             this.iMessageExecutor.execute(this.readTask);
         }
     }
 
     protected void notifyWriteEvent() {
+        log.info("2023-09-08-writeProcessing = {}", readProcessing.get());
         if(writeProcessing.compareAndSet(false,true)){
+            log.info("2023-09-08-write-判断队列是否已经达到上限了----{}", this.iMessageExecutor.isFull());
             this.iMessageExecutor.execute(this.writeTask);
         }
     }

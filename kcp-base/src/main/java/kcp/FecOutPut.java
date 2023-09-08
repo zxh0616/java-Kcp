@@ -1,7 +1,6 @@
 package kcp;
 
 import com.backblaze.erasure.IFecEncode;
-import com.backblaze.erasure.fecNative.FecEncode;
 import io.netty.buffer.ByteBuf;
 
 /**

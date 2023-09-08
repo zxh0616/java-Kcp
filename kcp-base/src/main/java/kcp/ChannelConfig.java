@@ -14,10 +14,20 @@ public class ChannelConfig {
     private int conv;
     private boolean nodelay;
     private int interval = Kcp.IKCP_INTERVAL;
+
+    /**
+     * 是否快速重传 默认0关闭，可以设置2（2次ACK跨越将会直接重传）
+     **/
     private int fastresend;
+
+    /**
+     * nocwnd   是否关闭拥塞控制窗口
+     **/
     private boolean nocwnd;
     private int sndwnd = Kcp.IKCP_WND_SND;
     private int rcvwnd = Kcp.IKCP_WND_RCV;
+
+    //分片大小
     private int mtu = Kcp.IKCP_MTU_DEF;
     //超时时间 超过一段时间没收到消息断开连接
     private long timeoutMillis;

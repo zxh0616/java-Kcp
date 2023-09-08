@@ -8,13 +8,13 @@ import java.util.concurrent.atomic.LongAdder;
  * 2018/8/29.
  */
 public class Snmp {
-    // bytes sent from upper level
+    // bytes sent from upper level 从上级发送的字节
     public LongAdder BytesSent = new LongAdder();
-    // bytes received to upper level
+    // bytes received to upper level 接收到上级的字节
     public LongAdder BytesReceived = new LongAdder();
-    // max number of connections ever reached
+    // max number of connections ever reached 已达到的最大连接数
     public LongAdder MaxConn = new LongAdder();
-    // accumulated active open connections
+    // accumulated active open connections 累积的活动打开连接
     public LongAdder ActiveOpens = new LongAdder();
     // accumulated passive open connections
     public LongAdder PassiveOpens = new LongAdder();
@@ -26,17 +26,17 @@ public class Snmp {
     public LongAdder InCsumErrors = new LongAdder();
     // packet iput errors reported from KCP
     public LongAdder KCPInErrors = new LongAdder();
-    // incoming packets count
+    // incoming packets count 传入数据包计数
     public LongAdder InPkts = new LongAdder();
-    // outgoing packets count
+    // outgoing packets count 传出数据包计数
     public LongAdder OutPkts = new LongAdder();
-    // incoming KCP segments
+    // incoming KCP segments 传入KCP段
     public LongAdder InSegs = new LongAdder();
-    // outgoing KCP segments
+    // outgoing KCP segments 传出KCP段
     public LongAdder OutSegs = new LongAdder();
-    // UDP bytes received
+    // UDP bytes received 已接收UDP字节
     public LongAdder InBytes = new LongAdder();
-    // UDP bytes sent
+    // UDP bytes sent 已发送UDP字节
     public LongAdder OutBytes = new LongAdder();
     // accmulated retransmited segments
     public LongAdder RetransSegs = new LongAdder();

@@ -64,7 +64,7 @@ public class ReadTask implements ITask {
                     readBytebuf(byteBuf,current,ukcp);
                 }
             } else {
-                while (ukcp.canRecv()) {
+                while (ukcp.canRecv()) { //判断一条消息是否完整收全了
                     ByteBuf recvBuf = ukcp.mergeReceive();
                     readBytes += recvBuf.readableBytes();
                     readBytebuf(recvBuf,current,ukcp);

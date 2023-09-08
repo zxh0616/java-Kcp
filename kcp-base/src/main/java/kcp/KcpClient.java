@@ -1,8 +1,7 @@
 package kcp;
 
-import com.backblaze.erasure.ReedSolomon;
 import com.backblaze.erasure.fec.Fec;
-import com.backblaze.erasure.fecNative.ReedSolomonNative;
+import com.backblaze.erasure.fec.Snmp;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -125,8 +124,8 @@ public class KcpClient {
         iMessageExecutor.execute(() -> {
             try {
                 ukcp.getKcpListener().onConnected(ukcp);
-            }catch (Throwable throwable){
-                ukcp.getKcpListener().handleException(throwable,ukcp);
+            } catch (Throwable throwable) {
+                ukcp.getKcpListener().handleException(throwable, ukcp);
             }
         });
 
@@ -141,7 +140,7 @@ public class KcpClient {
 
 
     public void stop() {
-        //System.out.println("关闭连接");
+        System.out.println("关闭连接");
         channelManager.getAll().forEach(ukcp -> {
             try {
                 ukcp.close();
@@ -149,11 +148,11 @@ public class KcpClient {
                 throwable.printStackTrace();
             }
         });
-        //System.out.println("关闭连接1");
+        System.out.println("关闭连接1");
         if (iMessageExecutorPool != null) {
             iMessageExecutorPool.stop();
         }
-        //System.out.println("关闭连接2");
+        System.out.println("关闭连接2");
         if (nioEventLoopGroup != null) {
             nioEventLoopGroup.shutdownGracefully();
         }
@@ -161,8 +160,8 @@ public class KcpClient {
             hashedWheelTimer.stop();
         }
 
-        //System.out.println(Snmp.snmp);
-        //System.out.println("关闭连接3");
+        System.out.println(Snmp.snmp);
+        System.out.println("关闭连接3");
     }
 
     public IChannelManager getChannelManager() {

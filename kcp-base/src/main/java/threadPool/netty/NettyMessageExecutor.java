@@ -1,8 +1,6 @@
 package threadPool.netty;
 
-import io.netty.channel.DefaultEventLoop;
 import io.netty.channel.EventLoop;
-import io.netty.util.concurrent.ThreadProperties;
 import threadPool.IMessageExecutor;
 import threadPool.ITask;
 
@@ -31,10 +29,11 @@ public class NettyMessageExecutor implements IMessageExecutor {
 
     @Override
     public void execute(ITask iTask) {
-        //if(eventLoop.inEventLoop()){
-        //    iTask.execute();
-        //}else{
+        //用于检查当前线程是否处于事件循环中。
+        if (eventLoop.inEventLoop()) {
+            iTask.execute();
+        } else {
             this.eventLoop.execute(() -> iTask.execute());
-        //}
+        }
     }
 }

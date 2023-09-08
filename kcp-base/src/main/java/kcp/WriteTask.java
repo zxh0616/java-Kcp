@@ -28,7 +28,7 @@ public class WriteTask implements ITask {
             if(!ukcp.isActive()){
                 return;
             }
-            //从发送缓冲区到kcp缓冲区
+            //从KCP写缓冲区 到  发送缓冲区
             Queue<ByteBuf> queue = ukcp.getWriteBuffer();
             int writeCount =0;
             long writeBytes = 0;
@@ -47,7 +47,8 @@ public class WriteTask implements ITask {
                     return;
                 }
             }
-            Snmp.snmp.BytesSent.add(writeBytes);
+            Snmp.snmp.BytesSent.add(writeBytes); // 记录从上级发送的字节
+            //是否控制 写入缓冲区大小
             if(ukcp.isControlWriteBufferSize()){
                 ukcp.getWriteBufferIncr().addAndGet(writeCount);
             }

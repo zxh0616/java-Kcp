@@ -66,6 +66,14 @@ public class KcpServer {
             channelManager = new ServerAddressChannelManager();
         }
         //定时器，用于在指定的时间间隔后执行任务。
+        //这段代码创建了一个基于哈希轮算法的定时器，用于管理和触发定时任务。
+        // 在构造函数中，它对输入参数进行验证、初始化轮和线程，还包括了一些关于内存泄漏和实例计数的逻辑。
+        //threadFactory：用于创建线程的工厂。
+        //tickDuration：每个“刻度”（tick）的时间间隔，以及该时间间隔的时间单位。
+        //ticksPerWheel：哈希轮中的刻度数量。
+        //leakDetection：是否启用内存泄漏检测。
+        //maxPendingTimeouts：最大允许的等待超时数量。
+        //taskExecutor：用于执行定时任务的执行器。
         hashedWheelTimer = new HashedWheelTimer(new TimerThreadFactory(),1, TimeUnit.MILLISECONDS);
 
 
@@ -109,8 +117,15 @@ public class KcpServer {
                 cp.addLast(serverChannelHandler);
             }
         });
+
         //bootstrap.option(ChannelOption.SO_RCVBUF, 10*1024*1024);
 
+   /*     SO_REUSEADDR 可以用来解决以下问题：
+        端口重用： 当一个 socket 连接关闭后，它会在一段时间内进入 TIME_WAIT 状态，以确保所有延迟的数据片段都被正确处理。
+                  这个状态会阻止其他 socket 绑定到相同的地址和端口，导致在某些情况下无法立即重用该地址。使用 SO_REUSEADDR 选项，您可以允许新的 socket 立即绑定到相同的地址和端口，即使之前的连接还处于 TIME_WAIT 状态。
+        快速重启： 在一些网络服务中，特别是服务器应用，可能需要在关闭后迅速重启。
+                  如果不启用 SO_REUSEADDR，重启时可能会因为之前的 socket 还在 TIME_WAIT 状态而导致无法绑定到相同的地址和端口。
+      */
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 

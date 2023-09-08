@@ -1,8 +1,6 @@
 package kcp;
 
-import com.backblaze.erasure.ReedSolomon;
 import com.backblaze.erasure.fec.Fec;
-import com.backblaze.erasure.fecNative.ReedSolomonNative;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

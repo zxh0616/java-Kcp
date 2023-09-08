@@ -4,6 +4,7 @@ import io.netty.channel.socket.DatagramPacket;
 
 import java.net.SocketAddress;
 import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -19,4 +20,6 @@ public interface IChannelManager {
     void del(Ukcp ukcp);
 
     Collection<Ukcp> getAll();
+
+    Map<?, Ukcp> getUkcpMap();
 }

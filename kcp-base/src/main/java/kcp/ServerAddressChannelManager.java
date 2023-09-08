@@ -33,4 +33,9 @@ public class ServerAddressChannelManager implements IChannelManager {
     public Collection<Ukcp> getAll() {
         return this.ukcpMap.values();
     }
+
+    @Override
+    public Map<SocketAddress, Ukcp> getUkcpMap() {
+        return ukcpMap;
+    }
 }
