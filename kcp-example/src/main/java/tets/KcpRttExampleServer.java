@@ -85,7 +85,6 @@ public class KcpRttExampleServer implements KcpListener {
 
     @Override
     public void handleReceive(ByteBuf buf, Ukcp kcp) {
-        ByteBuf copy = buf.copy();
 
         int flag = buf.readInt();
         if (flag == 0) {
@@ -142,27 +141,6 @@ public class KcpRttExampleServer implements KcpListener {
             playingStreamUkcp.write(buf);
         }
 
-
-        //short curCount = buf.getShort(buf.readerIndex());
-        //System.out.println(Thread.currentThread().getName()+"  收到消息 "+curCount);
-        //
-        //
-        //
-        //Map<?, Ukcp> ukcpMap = kcp.getChannelManager().getUkcpMap();
-        //Ukcp ukcp = ukcpMap.get(456);
-        //if (ukcp != null) {
-        //    //User user = ukcp.user();
-        //    //每次收到消息重绑定地址
-        //    //user.setRemoteAddress(kcp.user().getRemoteAddress());
-        //    ukcp.write(copy);
-        //}
-
-        //ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(readableBytes);
-        //kcp.write(byteBuf.writeBytes("已经接收到".getBytes()));
-        //
-        //if (curCount == -1) {
-        //    kcp.close();
-        //}
     }
 
     @Override
