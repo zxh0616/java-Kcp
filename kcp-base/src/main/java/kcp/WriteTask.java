@@ -2,6 +2,8 @@ package kcp;
 
 import com.backblaze.erasure.fec.Snmp;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import threadPool.ITask;
 
 import java.io.IOException;
@@ -12,7 +14,14 @@ import java.util.Queue;
  * 2018/9/11.
  */
 public class WriteTask implements ITask {
+    private static final InternalLogger log = InternalLoggerFactory.getInstance(WriteTask.class);
 
+    @Override
+    public String toString() {
+        return "WriteTask{" +
+                "ukcp=" + ukcp +
+                '}';
+    }
 
     private final Ukcp ukcp;
 
@@ -54,7 +63,11 @@ public class WriteTask implements ITask {
             }
             //如果有发送 则检测时间
             if(!ukcp.canSend(false)||(ukcp.checkFlush()&& ukcp.isFastFlush())){
+
                 long now =System.currentTimeMillis();
+                if (log.isDebugEnabled()) {
+                    log.debug("{} [WriteTask-CanSend-Flush] now={} ", this, now);
+                }
                 long next = ukcp.flush(now);
                 ukcp.setTsUpdate(now+next);
             }

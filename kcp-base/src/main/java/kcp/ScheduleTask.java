@@ -3,6 +3,8 @@ package kcp;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import threadPool.IMessageExecutor;
 import threadPool.ITask;
 
@@ -13,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * 2018/10/24.
  */
 public class ScheduleTask implements ITask, Runnable, TimerTask {
-
+    private static final InternalLogger log = InternalLoggerFactory.getInstance(ScheduleTask.class);
     private final IMessageExecutor messageExecutor;
 
     private final Ukcp ukcp;
@@ -39,19 +41,28 @@ public class ScheduleTask implements ITask, Runnable, TimerTask {
             long now = System.currentTimeMillis();
             //判断连接是否关闭
             if (ukcp.getTimeoutMillis() != 0 && now - ukcp.getTimeoutMillis() > ukcp.getLastRecieveTime()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("{} ScheduleTask :超时退出", this);
+                }
                 ukcp.internalClose();
             }
             if (!ukcp.isActive()) {
                 return;
             }
             long timeLeft = ukcp.getTsUpdate() - now;
+            if (log.isDebugEnabled()) {
+                log.debug("{} ScheduleTask : tsUpdate={}, now={}, timeLeft={}", this, ukcp.getTsUpdate(), now, timeLeft);
+            }
             //判断执行时间是否到了
             if (timeLeft > 0) {
                 hashedWheelTimer.newTimeout(this,timeLeft, TimeUnit.MILLISECONDS);
                 return;
             }
             long next = ukcp.flush(now);
-            //hashedWheelTimer.newTimeout(this,next, TimeUnit.MILLISECONDS);
+            if (log.isDebugEnabled()) {
+                log.debug("{} ScheduleTask : next={}", this, next);
+            }
+            hashedWheelTimer.newTimeout(this, next, TimeUnit.MILLISECONDS);
             //检测写缓冲区 如果能写则触发写事件
             if (!ukcp.getWriteBuffer().isEmpty() && ukcp.canSend(false))
             {

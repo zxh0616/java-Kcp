@@ -517,6 +517,9 @@ public class Kcp implements IKcp {
         if (len == 0) {
             return -1;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("{} [WriteTask-send] mss={}, len={} ", this, mss, len);
+        }
         //在流模式下附加到前一段（如果可能）
         // append to previous segment in streaming mode (if possible)
         if (stream) {
@@ -608,8 +611,14 @@ public class Kcp implements IKcp {
         if (sndBuf.size() > 0) {
             Segment seg = sndBuf.peek();
             sndUna = seg.sn;
+            if (log.isDebugEnabled()) {
+                log.debug("{} input shrinkBuf: sndBuf.size()={}, sndUna={}", this, sndBuf.size(), sndUna);
+            }
         } else {
             sndUna = sndNxt;
+            if (log.isDebugEnabled()) {
+                log.debug("{} input shrinkBuf: sndBuf=null, sndUna=sndNxt={}", this, sndNxt);
+            }
         }
     }
 
@@ -675,6 +684,10 @@ public class Kcp implements IKcp {
         }
 
         for (Iterator<Segment> itr = sndBufItr.rewind(); itr.hasNext(); ) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("{} parseFastack, sndBuf.size={}", this, sndBuf.size());
+            }
             Segment seg = itr.next();
             if (itimediff(sn, seg.sn) < 0) {
                 break;
@@ -782,6 +795,8 @@ public class Kcp implements IKcp {
         boolean windowSlides = false;
 
         long uintCurrent = long2Uint(currentMs(current));
+        //long uintCurrent = long2Uint(current);
+
 
         while (true) {
             int conv, len, wnd;
@@ -841,6 +856,9 @@ public class Kcp implements IKcp {
                 this.rmtWnd = wnd ;//更新远端窗口大小删除已确认的包，una以前的包对方都收到了，可以把本地小于una的都删除掉
             }
 
+            if (log.isDebugEnabled()) {
+                log.debug("{} input parseUna: sn={}, una={}， wnd={}, ts={}", this, sn, una, wnd, ts);
+            }
             //this.rmtWnd = wnd; sndBuf >0  itimediff(una, seg.sn) > 0清空sndBufItr
             if(parseUna(una)>0)
             {
@@ -852,18 +870,24 @@ public class Kcp implements IKcp {
             boolean readed = false;
             switch (cmd) {
                 case IKCP_CMD_ACK: {
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} input ack: sn={}, sndUna={}, sndNxt={}", this, sn, sndUna, sndNxt);
+                    }
                     parseAck(sn);
                     parseFastack(sn,ts);
                     flag = true;
                     latest= ts;
                     int rtt = itimediff(uintCurrent, ts);
                     if (log.isDebugEnabled()) {
-                        log.debug("{} input ack: sn={}, rtt={}, rto={} ,regular={} ts={}", this, sn, rtt, rxRto,regular,ts);
+                        log.debug("{} input ack: sn={}, rtt={}, rto={} ,regular={} ts={}, una={}", this, sn, rtt, rxRto, regular, ts, una);
                     }
                     break;
                 }
                 case IKCP_CMD_PUSH: {
                     boolean repeat = true;
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} input push: sn={}, rcvNxt={}, rcvWnd={}", this, sn, rcvNxt, rcvWnd);
+                    }
                     if (itimediff(sn, rcvNxt + rcvWnd) < 0) {
                         ackPush(sn, ts);
                         if (itimediff(sn, rcvNxt) >= 0) {
@@ -910,7 +934,7 @@ public class Kcp implements IKcp {
                 default:
                     return -3;
             }
-
+            // ackMask > 0 才有效，跟 配置 ackMaskSize 大小有关
             parseAckMask(una,ackMask);
 
             if (!readed) {
@@ -930,17 +954,17 @@ public class Kcp implements IKcp {
         }
 
         if(!nocwnd){
-            if (itimediff(sndUna, oldSndUna) > 0) {
+            if (itimediff(sndUna, oldSndUna) > 0) { //发送速度 > 读取速度
                 if (cwnd < rmtWnd) {
-                    int mss = this.mss;
-                    if (cwnd < ssthresh) {
+                    int mss = this.mss; //521-24 =488
+                    if (cwnd < ssthresh) { //cwnd < 2
                         cwnd++;
-                        incr += mss;
-                    } else {
+                        incr += mss; //488 + 488
+                    } else { //cwmd >= 2
                         if (incr < mss) {
                             incr = mss;
                         }
-                        incr += (mss * mss) / incr + (mss / 16);
+                        incr += (mss * mss) / incr + (mss / 16); //+31
                         if ((cwnd + 1) * mss <= incr) {
                             if (mss > 0) {
                                 cwnd = (incr + mss - 1) / mss;
@@ -1016,6 +1040,9 @@ public class Kcp implements IKcp {
     @Override
     public long flush(boolean ackOnly, long current) {
 
+        if (log.isDebugEnabled()) {
+            log.debug("{} flush  start", this);
+        }
         // 'ikcp_update' haven't been called.
         //if (!updated) {
         //    return;
@@ -1023,8 +1050,12 @@ public class Kcp implements IKcp {
 
         //long current = this.current;
         //long uintCurrent = long2Uint(current);
-        current = currentMs(current);
+        //current = currentMs(current);
 
+        long tsCurrent = currentMs(current);
+        //if (log.isDebugEnabled()) {
+        //    log.debug("{} flush : current={}, startTicks={}, tsCurrent={}", this, current, startTicks, tsCurrent);
+        //}
         Segment seg = Segment.createSegment(byteBufAllocator, 0);
         seg.conv = conv;
         seg.cmd = IKCP_CMD_ACK;
@@ -1147,6 +1178,9 @@ public class Kcp implements IKcp {
         int newSegsCount=0;
 
         // move data from snd_queue to snd_buf
+        if (log.isDebugEnabled()) {
+            log.debug("{} snd_queue to snd_buf: sndNxt={}, sndUna={}, cwnd0={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndUna, cwnd0, sndQueue.size(), sndBuf.size());
+        }
         while (itimediff(sndNxt, sndUna + cwnd0) < 0) {
             Segment newSeg = sndQueue.poll();
             if (newSeg == null) {
@@ -1192,8 +1226,7 @@ public class Kcp implements IKcp {
                 change++;
                 fastRetransSegs++;
                 if (log.isDebugEnabled()) {
-                    log.debug("{} fastresend. sn={}, xmit={}, resendts={} ", this, segment.sn, segment.xmit, (segment
-                            .resendts - current));
+                    log.debug("{} fastresend. sn={}, xmit={}, resendts={} ", this, segment.sn, segment.xmit, (segment.resendts - current));
                 }
             }
             else if(segment.fastack>0 &&newSegsCount==0){  // early retransmit
@@ -1216,15 +1249,14 @@ public class Kcp implements IKcp {
                 lost = true;
                 lostSegs++;
                 if (log.isDebugEnabled()) {
-                    log.debug("{} resend. sn={}, xmit={}, resendts={}", this, segment.sn, segment.xmit, (segment
-                            .resendts - current));
+                    log.debug("{} resend. sn={}, xmit={}, resendts={}", this, segment.sn, segment.xmit, (segment.resendts - current));
                 }
             }
 
 
             if (needsend) {
                 segment.xmit++;
-                segment.ts = long2Uint(current);
+                segment.ts = long2Uint(tsCurrent);
                 segment.wnd = seg.wnd;
                 segment.una = rcvNxt;
                 segment.ackMaskSize = this.ackMaskSize;
@@ -1274,17 +1306,17 @@ public class Kcp implements IKcp {
         }
         // update ssthresh
         if (!nocwnd){
-            if (change > 0) {
-                int inflight = (int) (sndNxt - sndUna);
-                ssthresh = inflight / 2;
+            if (change > 0) {  //检查是否发生了网络拥塞
+                int inflight = (int) (sndNxt - sndUna); //未确认的数据包数量。 32
+                ssthresh = inflight / 2; //16
                 if (ssthresh < IKCP_THRESH_MIN) {
                     ssthresh = IKCP_THRESH_MIN;
                 }
-                cwnd = ssthresh + resent;
-                incr = cwnd * mss;
+                cwnd = ssthresh + resent; //16+2  cwnd 设置为 ssthresh 加上重新发送（resent）的数据包数量，这可能是一种拥塞控制策略。
+                incr = cwnd * mss; //32 * 488
             }
 
-            if (lost) {
+            if (lost) { //数据包丢失（lost）,这也是拥塞控制的一个信号
                 ssthresh = cwnd0 / 2;
                 if (ssthresh < IKCP_THRESH_MIN) {
                     ssthresh = IKCP_THRESH_MIN;
@@ -1298,7 +1330,11 @@ public class Kcp implements IKcp {
                 incr = mss;
             }
         }
+        if (log.isDebugEnabled()) {
+            log.debug("{} flush  end", this);
+        }
         return minrto;
+
     }
 
     /**
@@ -1590,6 +1626,10 @@ public class Kcp implements IKcp {
 
     public static class Segment {
 
+        /**
+         * message发送时刻的时间戳    连接->消息发送 中间数据准备的时间戳
+         **/
+        private long ts;
 
         private static final Recycler<Segment> RECYCLER = new Recycler<Segment>() {
 
@@ -1607,8 +1647,27 @@ public class Kcp implements IKcp {
         private short frg;
         /**剩余接收窗口大小(接收窗口大小-接收队列大小)**/
         private int wnd;
-        /**message发送时刻的时间戳**/
-        private long ts;
+
+        @Override
+        public String toString() {
+            return "Segment{" +
+                    "conv=" + conv +
+                    ", cmd=" + cmd +
+                    ", frg=" + frg +
+                    ", wnd=" + wnd +
+                    ", ts=" + ts +
+                    ", sn=" + sn +
+                    ", una=" + una +
+                    ", resendts=" + resendts +
+                    ", rto=" + rto +
+                    ", fastack=" + fastack +
+                    ", xmit=" + xmit +
+                    ", ackMask=" + ackMask +
+                    ", data=" + data +
+                    ", ackMaskSize=" + ackMaskSize +
+                    ", recyclerHandle=" + recyclerHandle +
+                    '}';
+        }
         /**message分片segment的序号**/
         private long sn;
         /**待接收消息序号(接收滑动窗口左端)**/

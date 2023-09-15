@@ -45,17 +45,21 @@ public class KcpRttClient implements KcpListener {
     }
 
     public static void main(String[] args) {
+        //for (int i = 1; i < 4 ; i++) {
+
         ChannelConfig channelConfig = new ChannelConfig();
         channelConfig.nodelay(true, 40, 2, true);
         channelConfig.setSndwnd(512);
         channelConfig.setRcvwnd(512);
         channelConfig.setMtu(512);
         channelConfig.setAckNoDelay(true);
-        channelConfig.setConv(55);
+        channelConfig.setStream(true);
+        //channelConfig.setConv(i * 111);
+        channelConfig.setConv(111);
 
         //channelConfig.setFecAdapt(new FecAdapt(3,1));
         //channelConfig.setCrc32Check(true);
-        //channelConfig.setTimeoutMillis(10000);
+        channelConfig.setTimeoutMillis(100000);
         //channelConfig.setAckMaskSize(32);
         KcpClient kcpClient = new KcpClient();
         kcpClient.init(channelConfig);
@@ -63,17 +67,25 @@ public class KcpRttClient implements KcpListener {
         KcpRttClient kcpClientRttExample = new KcpRttClient();
         kcpClient.connect(new InetSocketAddress("127.0.0.1", 20003), channelConfig, kcpClientRttExample);
 
+
         //kcpClient.connect(new InetSocketAddress("10.60.100.191",20003),channelConfig,kcpClientRttExample);
+        //}
+
+
     }
 
     @Override
     public void onConnected(Ukcp ukcp) {
-        ByteBuf byteBuf = Unpooled.buffer(10);
-        byteBuf.writeShort(100);
-        byteBuf.writeShort(10);
-        byteBuf.writeBytes("你好啊".getBytes());
-        ukcp.write(byteBuf);
-        byteBuf.release();
+
+        for (int i = 1; i < 2000; i++) {
+            ByteBuf byteBuf = Unpooled.buffer(10);
+            byteBuf.writeShort(100);
+            byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));
+            byteBuf.writeBytes("你好啊你好啊你好啊".getBytes());
+            ukcp.write(byteBuf);
+            byteBuf.release();
+            //if()
+        }
 
         //
         //future = scheduleSrv.scheduleWithFixedDelay(() -> {
@@ -117,11 +129,11 @@ public class KcpRttClient implements KcpListener {
                 System.out.println("???");
             }
             //log.info("rcv count {} {}", curCount, System.currentTimeMillis());
-            short aShort = byteBuf.readShort();
             int readableBytes = byteBuf.readableBytes();
             byte[] contentBytes = new byte[readableBytes];
             byteBuf.readBytes(contentBytes);
             String content = new String(contentBytes);
+
             rtts[idx] = (int) (System.currentTimeMillis() - startTime - time);
             System.out.println("rtt : " + curCount + "  " + rtts[idx] + "---服务端返还数据：" + content);
         }

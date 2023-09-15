@@ -402,17 +402,17 @@ public class Ukcp{
     }
 
     private void notifyReadEvent() {
-        log.info("2023-09-08-readProcessing = {}", readProcessing.get());
+        //log.info("2023-09-08-readProcessing = {}", readProcessing.get());
         if(readProcessing.compareAndSet(false,true)){
-            log.info("2023-09-08-read-判断队列是否已经达到上限了----{}", this.iMessageExecutor.isFull());
+            //log.info("2023-09-08-read-判断队列是否已经达到上限了----{}", this.iMessageExecutor.isFull());
             this.iMessageExecutor.execute(this.readTask);
         }
     }
 
     protected void notifyWriteEvent() {
-        log.info("2023-09-08-writeProcessing = {}", readProcessing.get());
+        //log.info("2023-09-08-writeProcessing = {}", readProcessing.get());
         if(writeProcessing.compareAndSet(false,true)){
-            log.info("2023-09-08-write-判断队列是否已经达到上限了----{}", this.iMessageExecutor.isFull());
+            //log.info("2023-09-08-write-判断队列是否已经达到上限了----{}", this.iMessageExecutor.isFull());
             this.iMessageExecutor.execute(this.writeTask);
         }
     }
@@ -457,6 +457,7 @@ public class Ukcp{
         //连接删除
         channelManager.del(this);
         release();
+        //System.exit(0);
     }
 
     void release() {

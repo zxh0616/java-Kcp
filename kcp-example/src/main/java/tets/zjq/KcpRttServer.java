@@ -19,13 +19,14 @@ public class KcpRttServer implements KcpListener {
         KcpRttServer kcpRttExampleServer = new KcpRttServer();
 
         ChannelConfig channelConfig = new ChannelConfig();
-        channelConfig.nodelay(true, 40, 2, true);
+        channelConfig.nodelay(true, 20, 2, true);
         channelConfig.setSndwnd(512);
         channelConfig.setRcvwnd(512);
         channelConfig.setMtu(512);
+        channelConfig.setStream(true);
         //channelConfig.setFecAdapt(new FecAdapt(3,1));
         channelConfig.setAckNoDelay(true);
-        //channelConfig.setTimeoutMillis(10000);
+        channelConfig.setTimeoutMillis(100000);
         channelConfig.setUseConvChannel(true);
         //channelConfig.setCrc32Check(true);
         KcpServer kcpServer = new KcpServer();
@@ -44,7 +45,7 @@ public class KcpRttServer implements KcpListener {
 
         short curCount = buf.getShort(buf.readerIndex());
         System.out.println(Thread.currentThread().getName() + "  收到消息 " + curCount);
-        kcp.write(buf);
+        //kcp.write(buf);
         if (curCount == -1) {
             kcp.close();
         }
