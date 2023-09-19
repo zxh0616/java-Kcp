@@ -54,15 +54,16 @@ public class KcpRttExampleClient implements KcpListener {
     public static void main(String[] args) {
 
         ChannelConfig channelConfig = new ChannelConfig();
-        channelConfig.nodelay(true, 400000000, 2, true);
+        //channelConfig.nodelay(true, 400000000, 2, true);
+        channelConfig.nodelay(true, 40, 2, false);
         //channelConfig.nodelay(true,40,4,false);
         channelConfig.setSndwnd(512);
         channelConfig.setRcvwnd(512);
         channelConfig.setMtu(512);
         channelConfig.setAckNoDelay(true);
         //channelConfig.setStream(true);
-        channelConfig.setConv(1111);
-        //channelConfig.setConv(2222);
+        //channelConfig.setConv(1111);
+        channelConfig.setConv(2222);
 
         //channelConfig.setFecAdapt(new FecAdapt(3,1));
         //channelConfig.setCrc32Check(true);
@@ -72,8 +73,8 @@ public class KcpRttExampleClient implements KcpListener {
         kcpClient.init(channelConfig);
 
         KcpRttExampleClient kcpClientRttExample = new KcpRttExampleClient();
-        kcpClient.connect(new InetSocketAddress("47.102.147.143", 20003), channelConfig, kcpClientRttExample);
-        //kcpClient.connect(new InetSocketAddress("127.0.0.1",20003),channelConfig,kcpClientRttExample);
+        //kcpClient.connect(new InetSocketAddress("47.102.147.143", 20003), channelConfig, kcpClientRttExample);
+        kcpClient.connect(new InetSocketAddress("127.0.0.1", 20003), channelConfig, kcpClientRttExample);
 
         //kcpClient.connect(new InetSocketAddress("10.60.100.191",20003),channelConfig,kcpClientRttExample);
     }

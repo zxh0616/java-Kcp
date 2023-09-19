@@ -30,10 +30,10 @@ public class NettyMessageExecutor implements IMessageExecutor {
     @Override
     public void execute(ITask iTask) {
         //用于检查当前线程是否处于事件循环中。
-        if (eventLoop.inEventLoop()) {
-            iTask.execute();
-        } else {
+        //if (eventLoop.inEventLoop()) {
+        //    iTask.execute();
+        //} else {
             this.eventLoop.execute(() -> iTask.execute());
-        }
+        //}
     }
 }

@@ -51,9 +51,10 @@ public class KcpRttClient implements KcpListener {
         channelConfig.nodelay(true, 40, 2, true);
         channelConfig.setSndwnd(512);
         channelConfig.setRcvwnd(512);
-        channelConfig.setMtu(512);
+        channelConfig.setMtu(100);
         channelConfig.setAckNoDelay(true);
-        channelConfig.setStream(true);
+        channelConfig.setAckMaskSize(8);
+        //channelConfig.setStream(true);
         //channelConfig.setConv(i * 111);
         channelConfig.setConv(111);
 
@@ -71,13 +72,12 @@ public class KcpRttClient implements KcpListener {
         //kcpClient.connect(new InetSocketAddress("10.60.100.191",20003),channelConfig,kcpClientRttExample);
         //}
 
-
     }
 
     @Override
     public void onConnected(Ukcp ukcp) {
 
-        for (int i = 1; i < 2000; i++) {
+        for (int i = 1; i < 500; i++) {
             ByteBuf byteBuf = Unpooled.buffer(10);
             byteBuf.writeShort(100);
             byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));

@@ -3,6 +3,8 @@ package kcp;
 import com.backblaze.erasure.fec.Snmp;
 import internal.CodecOutputList;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 import threadPool.ITask;
 
 import java.util.Queue;
@@ -13,7 +15,7 @@ import java.util.Queue;
  */
 public class ReadTask implements ITask {
 
-
+    private static final InternalLogger log = InternalLoggerFactory.getInstance(ReadTask.class);
     private final Ukcp ukcp;
 
     public ReadTask(Ukcp ukcp) {
@@ -30,8 +32,12 @@ public class ReadTask implements ITask {
             if (!ukcp.isActive()) {
                 return;
             }
+
             long current = System.currentTimeMillis();
             Queue<ByteBuf> recieveList = ukcp.getReadBuffer();
+            //if (log.isDebugEnabled()) {
+            //    log.debug("{} ReadTask readBuffer.size={}", this, recieveList.size());
+            //}
             int readCount =0;
             for (; ; ) {
                 ByteBuf byteBuf = recieveList.poll();
@@ -39,6 +45,9 @@ public class ReadTask implements ITask {
                     break;
                 }
                 readCount++;
+                if (log.isDebugEnabled()) {
+                    log.debug("{} ReadTask readCount={}", this, readCount);
+                }
                 ukcp.input(byteBuf, current);
                 byteBuf.release();
             }
@@ -64,6 +73,9 @@ public class ReadTask implements ITask {
                     readBytebuf(byteBuf,current,ukcp);
                 }
             } else {
+                //if (log.isDebugEnabled()) {
+                //    log.debug("{} ReadTask 判断一条消息是否完整收全了");
+                //}
                 while (ukcp.canRecv()) { //判断一条消息是否完整收全了
                     ByteBuf recvBuf = ukcp.mergeReceive();
                     readBytes += recvBuf.readableBytes();

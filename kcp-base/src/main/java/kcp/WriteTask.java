@@ -39,6 +39,7 @@ public class WriteTask implements ITask {
             }
             //从KCP写缓冲区 到  发送缓冲区
             Queue<ByteBuf> queue = ukcp.getWriteBuffer();
+
             int writeCount =0;
             long writeBytes = 0;
             while(ukcp.canSend(false)){
@@ -65,9 +66,6 @@ public class WriteTask implements ITask {
             if(!ukcp.canSend(false)||(ukcp.checkFlush()&& ukcp.isFastFlush())){
 
                 long now =System.currentTimeMillis();
-                if (log.isDebugEnabled()) {
-                    log.debug("{} [WriteTask-CanSend-Flush] now={} ", this, now);
-                }
                 long next = ukcp.flush(now);
                 ukcp.setTsUpdate(now+next);
             }

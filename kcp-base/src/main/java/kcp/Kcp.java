@@ -517,9 +517,10 @@ public class Kcp implements IKcp {
         if (len == 0) {
             return -1;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("{} [WriteTask-send] mss={}, len={} ", this, mss, len);
-        }
+
+        //if (log.isDebugEnabled()) {
+        //    log.debug("{} [WriteTask-send] mss={}, len={} ", this, mss, len);
+        //}
         //在流模式下附加到前一段（如果可能）
         // append to previous segment in streaming mode (if possible)
         if (stream) {
@@ -543,10 +544,10 @@ public class Kcp implements IKcp {
                     if (len == 0) {
                         return 0;
                     }
+
                 }
             }
         }
-
         int count;
         if (len <= mss) {
             count = 1;
@@ -871,7 +872,7 @@ public class Kcp implements IKcp {
             switch (cmd) {
                 case IKCP_CMD_ACK: {
                     if (log.isDebugEnabled()) {
-                        log.debug("{} input ack: sn={}, sndUna={}, sndNxt={}", this, sn, sndUna, sndNxt);
+                        log.debug("{} input ack: sn={}, sndUna={}, sndNxt={}, sndBuf.size={}", this, sn, sndUna, sndNxt, sndBuf.size());
                     }
                     parseAck(sn);
                     parseFastack(sn,ts);
@@ -911,7 +912,7 @@ public class Kcp implements IKcp {
                         Snmp.snmp.RepeatSegs.increment();
                     }
                     if (log.isDebugEnabled()) {
-                        log.debug("{} input push: sn={}, una={}, ts={},regular={}", this, sn, una, ts,regular);
+                        log.debug("{} input push: sn={}, una={}, ts={},regular={}, rcvNxt={}, rcvWnd={}", this, sn, una, ts, regular, rcvNxt, rcvWnd);
                     }
                     break;
                 }
@@ -1076,7 +1077,9 @@ public class Kcp implements IKcp {
             ackMask = 0;
             lastRcvNxt = rcvNxt;
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug("{} flush: rcvNxt={}, sndNxt={}, sndUna={}", this, rcvNxt, sndNxt, sndUna);
+        }
 
         for (int i = 0; i < count; i++) {
             long sn =  acklist[i * 2];
@@ -1105,7 +1108,7 @@ public class Kcp implements IKcp {
                 encodeSeg(buffer, seg);
 
                 if (log.isDebugEnabled()) {
-                    log.debug("{} flush ack: sn={}, ts={} ,count={}", this, seg.sn, seg.ts,count);
+                    log.debug("{} flush ack: sn={}, ts={} ,count={}, index={}, rcvNxt={}", this, seg.sn, seg.ts, count, i, rcvNxt);
                 }
             }
         }
@@ -1179,7 +1182,7 @@ public class Kcp implements IKcp {
 
         // move data from snd_queue to snd_buf
         if (log.isDebugEnabled()) {
-            log.debug("{} snd_queue to snd_buf: sndNxt={}, sndUna={}, cwnd0={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndUna, cwnd0, sndQueue.size(), sndBuf.size());
+            log.debug("{} before snd_queue to snd_buf: sndNxt={}, sndUna={}, cwnd0={}, this.cwd={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndUna, cwnd0, this.cwnd, sndQueue.size(), sndBuf.size());
         }
         while (itimediff(sndNxt, sndUna + cwnd0) < 0) {
             Segment newSeg = sndQueue.poll();
@@ -1193,7 +1196,9 @@ public class Kcp implements IKcp {
             sndNxt++;
             newSegsCount++;
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug("{} after snd_queue to snd_buf: sndNxt={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndQueue.size(), sndBuf.size());
+        }
         // calculate resent
         /**fastresend   是否快速重传 默认0关闭，可以设置2（2次ACK跨越将会直接重传）**/
         int resent = fastresend > 0 ? fastresend : Integer.MAX_VALUE;
@@ -1209,7 +1214,7 @@ public class Kcp implements IKcp {
         for (Iterator<Segment> itr = sndBufItr.rewind(); itr.hasNext();) {
             Segment segment = itr.next();
             boolean needsend = false;
-            /***xmit   发送分片的次数，每发送一次加一**/
+            /**xmit   发送分片的次数，每发送一次加一**/
             if (segment.xmit == 0) {
                 needsend = true;
                 /**rxRto   RTO重传超时*/
