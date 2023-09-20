@@ -1,0 +1,97 @@
+<mxfile host="Electron" modified="2023-09-18T06:00:18.663Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="pDXd8ARk_KfsQLpkNNyL" version="21.6.8" type="device">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="2063" dy="737" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-2" value="" style="rounded=0;html=1;jettySize=auto;orthogonalLoop=1;fontSize=11;endArrow=block;endFill=0;endSize=8;strokeWidth=1;shadow=0;labelBackgroundColor=none;edgeStyle=orthogonalEdgeStyle;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="WIyWlLk6GJQsqaUBKTNV-3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-3" value="客户端" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="220" y="80" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="279.5" y="230" as="sourcePoint" />
+            <mxPoint x="279.5" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-0" value="" style="rounded=0;html=1;jettySize=auto;orthogonalLoop=1;fontSize=11;endArrow=block;endFill=0;endSize=8;strokeWidth=1;shadow=0;labelBackgroundColor=none;edgeStyle=orthogonalEdgeStyle;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="533.5" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-1" value="服务端" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="473.5" y="80" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-18" target="7RlUj_piEzG3KWm9b5ct-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-18" value="write_buffer" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="220" y="480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-19" target="7RlUj_piEzG3KWm9b5ct-21" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-19" value="snd_queue" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="220" y="620" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-21" target="7RlUj_piEzG3KWm9b5ct-24" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-21" value="snd_buf" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="220" y="760" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-24" target="7RlUj_piEzG3KWm9b5ct-25" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-24" value="read_buffer" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="473.5" y="760" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-25" target="7RlUj_piEzG3KWm9b5ct-27" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-25" value="rcv_buf" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="473.5" y="620" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-27" target="7RlUj_piEzG3KWm9b5ct-32" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-27" value="rcv_queue" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="473.5" y="480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-29" target="7RlUj_piEzG3KWm9b5ct-18" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-29" value="写任务" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="220" y="290" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-40" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=8 8;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-30" target="7RlUj_piEzG3KWm9b5ct-39" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-30" value="连接服务端" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="220" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-32" value="读任务" style="whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="470" y="280" width="127" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-38" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="7RlUj_piEzG3KWm9b5ct-34" target="7RlUj_piEzG3KWm9b5ct-32" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-34" value="初始化" style="rounded=0;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="473.5" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-39" value="1、设置channel相关参数&lt;br style=&quot;border-color: var(--border-color); font-size: 13px; text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 13px; text-align: left;&quot;&gt;2、创建一个定时器&lt;/span&gt;&lt;br style=&quot;border-color: var(--border-color); font-size: 13px; text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 13px; text-align: left;&quot;&gt;3、通道进行&amp;nbsp;crc32&lt;/span&gt;&lt;font style=&quot;border-color: var(--border-color); font-size: 13px; text-align: left;&quot;&gt;校验&lt;/font&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-110" y="90" width="230" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="7RlUj_piEzG3KWm9b5ct-45" value="&lt;h1&gt;&lt;font style=&quot;font-size: 24px;&quot;&gt;步骤说明：&lt;/font&gt;&lt;/h1&gt;&lt;div style=&quot;font-size: 17px;&quot;&gt;&lt;ol style=&quot;line-height: 160%;&quot;&gt;&lt;li&gt;&lt;font style=&quot;font-size: 17px;&quot;&gt;服务端初始化，等待客户端连接。&lt;/font&gt;&lt;/li&gt;&lt;li&gt;&lt;font style=&quot;font-size: 17px;&quot;&gt;&lt;font color=&quot;#ff6666&quot;&gt;客户端初始化&lt;/font&gt;后，连接指定服务端，发送指定数据，&lt;/font&gt;会触发 写事件，启动写线程去把 data -&amp;gt; write_buffer -&amp;gt; snd_queue -&amp;gt; snd_buf 中，传输到服务端。&lt;/li&gt;&lt;li&gt;此时会启动一个线程去执行一个时间轮，即每隔多长时间执行一个任务，任务作用是检查UKCP的时间和自己的定时时间，如果可以发送，则直接发送，时间延后则重新定时，定时任务成功后，检测 写缓冲区，检查是否 需要触发写事件。&lt;/li&gt;&lt;li&gt;&lt;font color=&quot;#ff6666&quot;&gt;服务端收到 data后&lt;/font&gt;，会触发 读事件，启动读线程去 读 read_buffer -&amp;gt; rec_buf -&amp;gt; rcv_queue -&amp;gt; data，进行输出。&lt;/li&gt;&lt;li&gt;此时 同步骤4，会启动相同的时间轮，不过这次是在服务端执行。服务端判断。。，会发送ack包到客户端（链路和客户端-&amp;gt; 服务端一致），客户端接收到ack包，会根据ack包的时间计算 SRTT（平滑RTT） 和 RTO（重传超时）。&lt;br&gt;&lt;/li&gt;&lt;li&gt;至此，一次客户端-&amp;gt;服务端的单向 数据发送才算完成。&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="631" y="80" width="610" height="545" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
