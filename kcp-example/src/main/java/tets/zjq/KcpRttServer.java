@@ -45,6 +45,7 @@ public class KcpRttServer implements KcpListener {
         //ByteBuf copyBuf = buf.copy();
 
         short curCount = buf.getShort(buf.readerIndex());
+        //int  time = buf.getInt(buf.readerIndex() + 2);
         System.out.println(Thread.currentThread().getName() + "  收到消息 " + curCount);
         kcp.write(buf);
         if (curCount == -1) {

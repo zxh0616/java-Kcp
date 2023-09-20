@@ -48,7 +48,7 @@ public class KcpRttClient implements KcpListener {
         //for (int i = 1; i < 4 ; i++) {
 
         ChannelConfig channelConfig = new ChannelConfig();
-        channelConfig.nodelay(true, 40, 2, true);
+        channelConfig.nodelay(true, 30, 2, true);
         channelConfig.setSndwnd(512);
         channelConfig.setRcvwnd(512);
         channelConfig.setMtu(100);
@@ -76,37 +76,47 @@ public class KcpRttClient implements KcpListener {
 
     @Override
     public void onConnected(Ukcp ukcp) {
-
-        for (int i = 1; i < 500; i++) {
+        for (int i = 1; i < 600; i++) {
             ByteBuf byteBuf = Unpooled.buffer(10);
             byteBuf.writeShort(100);
             byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));
+            //System.out.println("发送时间：" + (int) (System.currentTimeMillis() - startTime));
             byteBuf.writeBytes("你好啊你好啊你好啊".getBytes());
             ukcp.write(byteBuf);
             byteBuf.release();
-            //if()
         }
-
-        //
         //future = scheduleSrv.scheduleWithFixedDelay(() -> {
-        //    ByteBuf byteBuf = rttMsg(++count);
-        //    ukcp.write(byteBuf);
-        //    byteBuf.release();
-        //    if (count >= rtts.length) {
+        //    if (  count++ >= 600) {
         //        // finish
         //        future.cancel(true);
-        //        byteBuf = rttMsg(-1);
+        //        ByteBuf byteBuf = Unpooled.buffer(10);
+        //        byteBuf.writeShort(-1);
+        //        byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));
+        //        byteBuf.writeBytes("你好啊你好啊你好啊".getBytes());
         //        ukcp.write(byteBuf);
         //        byteBuf.release();
         //
+        //    }else{
+        //        //for (int i = 1; i <= 600; i++) {
+        //            //ByteBuf byteBuf = rttMsg(++count);
+        //            ByteBuf byteBuf = Unpooled.buffer(10);
+        //            byteBuf.writeShort(100);
+        //            byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));
+        //            byteBuf.writeBytes("你好啊你好啊你好啊".getBytes());
+        //            ukcp.write(byteBuf);
+        //            byteBuf.release();
+        //
+        //
+        //            //ukcp.write(byteBuf);
+        //            //byteBuf.release();
+        //        //}
         //    }
-        //}, 20, 20, TimeUnit.MILLISECONDS);
+        //}, 5, 1, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
         int curCount = byteBuf.readShort();
-
         if (curCount == -1) {
             scheduleSrv.schedule(new Runnable() {
                 @Override
@@ -125,17 +135,19 @@ public class KcpRttClient implements KcpListener {
         } else {
             int idx = curCount - 1;
             long time = byteBuf.readInt();
-            if (rtts[idx] != -1) {
-                System.out.println("???");
-            }
+            //System.out.println("time--" + time);
+
+            //if (rtts[idx] != -1) {
+            //    System.out.println("???");
+            //}
             //log.info("rcv count {} {}", curCount, System.currentTimeMillis());
             int readableBytes = byteBuf.readableBytes();
             byte[] contentBytes = new byte[readableBytes];
             byteBuf.readBytes(contentBytes);
             String content = new String(contentBytes);
 
-            rtts[idx] = (int) (System.currentTimeMillis() - startTime - time);
-            System.out.println("rtt : " + curCount + "  " + rtts[idx] + "---服务端返还数据：" + content);
+            int rttTime = (int) (System.currentTimeMillis() - startTime - time);
+            System.out.println("rtt : " + curCount + "  " + rttTime + "---服务端返还数据：" + content);
         }
     }
 

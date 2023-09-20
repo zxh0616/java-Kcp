@@ -586,13 +586,13 @@ public class Kcp implements IKcp {
             rxSrtt = rtt;
             rxRttval = rtt >> 2;
         } else {
-            int delta = rtt - rxSrtt;
-            rxSrtt += delta>>3;
+            int delta = rtt - rxSrtt;  //103-21 = 82
+            rxSrtt += delta >> 3; // 82 /8 =21 + 10 = 31
             delta = Math.abs(delta);
-            if (rtt < rxSrtt - rxRttval) {
+            if (rtt < rxSrtt - rxRttval) { // 103  31-5=26
                 rxRttval += ( delta - rxRttval)>>5;
             } else {
-                rxRttval += (delta - rxRttval) >>2;
+                rxRttval += (delta - rxRttval) >> 2; //5 += （82-5）/4
             }
             //int delta = rtt - rxSrtt;
             //if (delta < 0) {
@@ -606,6 +606,9 @@ public class Kcp implements IKcp {
         }
         int rto = rxSrtt + Math.max(interval, rxRttval<<2);
         rxRto = ibound(rxMinrto, rto, IKCP_RTO_MAX);
+        if (log.isDebugEnabled()) {
+            log.debug("{} input updateAck: rxRttval={}, rxSrtt={}, rxRto={}", this, rxRttval, rxSrtt, rxRto);
+        }
     }
 
     private void shrinkBuf() {
@@ -858,7 +861,7 @@ public class Kcp implements IKcp {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("{} input parseUna: sn={}, una={}， wnd={}, ts={}", this, sn, una, wnd, ts);
+                log.debug("{} input parseUna: sn={}, una={}，this.rmtWnd={}, ts={}, sndBuf.size={}", this, sn, una, wnd, ts, sndBuf.size());
             }
             //this.rmtWnd = wnd; sndBuf >0  itimediff(una, seg.sn) > 0清空sndBufItr
             if(parseUna(una)>0)
@@ -936,6 +939,9 @@ public class Kcp implements IKcp {
                     return -3;
             }
             // ackMask > 0 才有效，跟 配置 ackMaskSize 大小有关
+            if (log.isDebugEnabled()) {
+                log.debug("{} input parseAckMask: sn={}, una={}，ackMask={}", this, sn, una, ackMask);
+            }
             parseAckMask(una,ackMask);
 
             if (!readed) {
@@ -1182,7 +1188,7 @@ public class Kcp implements IKcp {
 
         // move data from snd_queue to snd_buf
         if (log.isDebugEnabled()) {
-            log.debug("{} before snd_queue to snd_buf: sndNxt={}, sndUna={}, cwnd0={}, this.cwd={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndUna, cwnd0, this.cwnd, sndQueue.size(), sndBuf.size());
+            log.debug("{} before snd_queue to snd_buf: sndNxt={}, sndUna={}, cwnd0={}, this.cwnd={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndUna, cwnd0, this.cwnd, sndQueue.size(), sndBuf.size());
         }
         while (itimediff(sndNxt, sndUna + cwnd0) < 0) {
             Segment newSeg = sndQueue.poll();

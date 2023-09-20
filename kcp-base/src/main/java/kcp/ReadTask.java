@@ -45,9 +45,9 @@ public class ReadTask implements ITask {
                     break;
                 }
                 readCount++;
-                if (log.isDebugEnabled()) {
-                    log.debug("{} ReadTask readCount={}", this, readCount);
-                }
+                //if (log.isDebugEnabled()) {
+                //    log.debug("{} ReadTask readCount={}", this, readCount);
+                //}
                 ukcp.input(byteBuf, current);
                 byteBuf.release();
             }
