@@ -38,7 +38,7 @@ public class KcpRttExampleClient implements KcpListener {
     private ScheduledFuture<?> future = null;
 
     public KcpRttExampleClient() {
-        data = Unpooled.buffer(190);
+        data = Unpooled.buffer(250);
         for (int i = 0; i < data.capacity(); i++) {
             data.writeByte((byte) i);
             //data.writeBytes("456456".getBytes());
@@ -55,11 +55,12 @@ public class KcpRttExampleClient implements KcpListener {
 
         ChannelConfig channelConfig = new ChannelConfig();
         //channelConfig.nodelay(true, 400000000, 2, true);
-        channelConfig.nodelay(true, 40, 2, false);
+        channelConfig.nodelay(true, 40, 2, true);
         //channelConfig.nodelay(true,40,4,false);
         channelConfig.setSndwnd(512);
         channelConfig.setRcvwnd(512);
-        channelConfig.setMtu(512);
+        channelConfig.setMtu(300);
+        channelConfig.setAckMaskSize(8);
         channelConfig.setAckNoDelay(true);
         //channelConfig.setStream(true);
         //channelConfig.setConv(1111);

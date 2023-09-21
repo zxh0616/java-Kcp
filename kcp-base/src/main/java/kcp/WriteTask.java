@@ -50,6 +50,9 @@ public class WriteTask implements ITask {
                 writeCount++;
                 try {
                     writeBytes +=byteBuf.readableBytes();
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} WriteTask: byteBuf.readableBytes()={}", this, byteBuf.readableBytes());
+                    }
                     ukcp.send(byteBuf);
                     byteBuf.release();
                 } catch (IOException e) {

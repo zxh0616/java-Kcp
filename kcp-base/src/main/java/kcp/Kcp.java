@@ -861,7 +861,8 @@ public class Kcp implements IKcp {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("{} input parseUna: sn={}, una={}，this.rmtWnd={}, ts={}, sndBuf.size={}", this, sn, una, wnd, ts, sndBuf.size());
+                log.debug("{} input parseUna: sn={}, una={}，this.rmtWnd={}, ts={}, sndque.size()={}, sndBuf.size={}, rcvBuf.size={}, rcvQue.size={}",
+                        this, sn, una, wnd, ts, sndQueue.size(), sndBuf.size(), rcvBuf.size(), rcvQueue.size());
             }
             //this.rmtWnd = wnd; sndBuf >0  itimediff(una, seg.sn) > 0清空sndBufItr
             if(parseUna(una)>0)
@@ -1188,7 +1189,7 @@ public class Kcp implements IKcp {
 
         // move data from snd_queue to snd_buf
         if (log.isDebugEnabled()) {
-            log.debug("{} before snd_queue to snd_buf: sndNxt={}, sndUna={}, cwnd0={}, this.cwnd={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndUna, cwnd0, this.cwnd, sndQueue.size(), sndBuf.size());
+            log.debug("{} before snd_queue to snd_buf: sndNxt={}, sndUna={}, cwnd0={}, this.cwnd={}, sndQueue.size={}, sndBuf.size={}, rcvBuf.size={}, rcvQue.size={}", this, sndNxt, sndUna, cwnd0, this.cwnd, sndQueue.size(), sndBuf.size(), rcvBuf.size(), rcvQueue.size());
         }
         while (itimediff(sndNxt, sndUna + cwnd0) < 0) {
             Segment newSeg = sndQueue.poll();
@@ -1203,7 +1204,7 @@ public class Kcp implements IKcp {
             newSegsCount++;
         }
         if (log.isDebugEnabled()) {
-            log.debug("{} after snd_queue to snd_buf: sndNxt={}, sndQueue.size={}, sndBuf.size={}", this, sndNxt, sndQueue.size(), sndBuf.size());
+            log.debug("{} after snd_queue to snd_buf: sndNxt={}, sndQueue.size={}, sndBuf.size={}, rcvBuf.size={}, rcvQue.size={}", this, sndNxt, sndQueue.size(), sndBuf.size(), rcvBuf.size(), rcvQueue.size());
         }
         // calculate resent
         /**fastresend   是否快速重传 默认0关闭，可以设置2（2次ACK跨越将会直接重传）**/
@@ -1227,7 +1228,7 @@ public class Kcp implements IKcp {
                 segment.rto = rxRto;
                 segment.resendts = current + segment.rto;
                 if (log.isDebugEnabled()) {
-                    log.debug("{} flush data: sn={}, resendts={}", this, segment.sn, (segment.resendts - current));
+                    log.debug("{} flush data: sn={}, resendts={}, sndQueue.size={}, sndBuf.size={}, rcvBuf.size={}, rcvQue.size={}", this, segment.sn, (segment.resendts - current), sndQueue.size(), sndBuf.size(), rcvBuf.size(), rcvQueue.size());
                 }
             }  else if (segment.fastack >= resent) {
                 needsend = true;

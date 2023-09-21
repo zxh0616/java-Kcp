@@ -44,7 +44,7 @@ public class KcpRttExampleServer implements KcpListener {
 拥塞窗口的大小会受到 RTT（Round-Trip Time）等因素的影响，以便在不引起拥塞的情况下合理利用网络带宽。这种机制有助于确保网络通信的可靠性和效率。
         */
         //channelConfig.nodelay(true, 40, 2, true);
-        channelConfig.nodelay(true, 40, 2, false);
+        channelConfig.nodelay(true, 40, 2, true);
         /**
          * IKCP_WND_SND 是 KCP 协议中的一个配置参数，用于设置发送窗口大小。
          * 发送窗口是 KCP 协议用于控制发送数据量的一个缓冲区，它表示允许同时发送的未确认数据包的最大数量.
@@ -61,8 +61,8 @@ public class KcpRttExampleServer implements KcpListener {
          * 这些较小的数据块的大小不能超过 MTU 的大小，否则可能会导致数据包被分片，从而增加网络传输的开销。
          * IKCP_MTU_DEF 是 KCP 协议中默认的 MTU 大小。
          */
-        channelConfig.setMtu(512);
-
+        channelConfig.setMtu(300);
+        channelConfig.setAckMaskSize(8);
         //channelConfig.setFecAdapt(new FecAdapt(3,1));
         channelConfig.setAckNoDelay(true);     //收到包立刻回传ack包
         //channelConfig.setTimeoutMillis(10000);  //超时时间 超过一段时间没收到消息断开连接
