@@ -861,8 +861,8 @@ public class Kcp implements IKcp {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("{} input parseUna: sn={}, una={}，this.rmtWnd={}, ts={}, sndque.size()={}, sndBuf.size={}, rcvBuf.size={}, rcvQue.size={}",
-                        this, sn, una, wnd, ts, sndQueue.size(), sndBuf.size(), rcvBuf.size(), rcvQueue.size());
+                log.debug("{} input parseUna: sn={}, una={}，this.rmtWnd={}, ts={}, rcvNxt={}, sndNxt={}, sndque.size()={}, sndBuf.size={}, rcvBuf.size={}, rcvQue.size={}",
+                        this, sn, una, wnd, ts, rcvNxt, sndNxt, sndQueue.size(), sndBuf.size(), rcvBuf.size(), rcvQueue.size());
             }
             //this.rmtWnd = wnd; sndBuf >0  itimediff(una, seg.sn) > 0清空sndBufItr
             if(parseUna(una)>0)
