@@ -1,4 +1,4 @@
-package tets;
+package com.kcp.test.zego.tets;
 
 import io.netty.buffer.ByteBuf;
 import kcp.ChannelConfig;

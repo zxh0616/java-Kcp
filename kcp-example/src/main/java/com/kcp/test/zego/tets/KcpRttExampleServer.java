@@ -1,4 +1,4 @@
-package tets;
+package com.kcp.test.zego.tets;
 
 import cn.hutool.core.collection.CollUtil;
 import com.backblaze.erasure.fec.Snmp;

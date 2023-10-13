@@ -1,4 +1,4 @@
-package tets;
+package com.kcp.test.zego.tets;
 
 import com.backblaze.erasure.fec.Snmp;
 import io.netty.buffer.ByteBuf;

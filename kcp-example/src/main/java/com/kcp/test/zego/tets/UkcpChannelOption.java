@@ -1,4 +1,4 @@
-package tets;
+package com.kcp.test.zego.tets;
 
 import io.netty.channel.ChannelOption;
 

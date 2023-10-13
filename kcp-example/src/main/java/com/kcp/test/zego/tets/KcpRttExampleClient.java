@@ -1,4 +1,4 @@
-package tets;
+package com.kcp.test.zego.tets;
 
 import cn.hutool.core.util.StrUtil;
 import com.backblaze.erasure.fec.Snmp;
@@ -64,7 +64,7 @@ public class KcpRttExampleClient implements KcpListener {
         channelConfig.setAckNoDelay(true);
         //channelConfig.setStream(true);
         //channelConfig.setConv(1111);
-        channelConfig.setConv(2222);
+        //channelConfig.setConv(2222);
 
         //channelConfig.setFecAdapt(new FecAdapt(3,1));
         //channelConfig.setCrc32Check(true);
@@ -89,6 +89,7 @@ public class KcpRttExampleClient implements KcpListener {
         //map.put("roomId", "9999");
         //map.put("userId", "1111");
         //String jsonStr = JSONUtil.toJsonStr(map);
+
         ByteBuf buf = Unpooled.buffer(10);
         buf.writeInt(0);
         buf.writeBytes("9999".getBytes());

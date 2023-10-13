@@ -1,25 +1,24 @@
-package tets;
+package com.kcp.test.zego.tets;
 
 import com.backblaze.erasure.fec.Snmp;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.DefaultEventLoop;
 import kcp.ChannelConfig;
-import kcp.KcpClient;
 import kcp.KcpListener;
+import kcp.KcpServer;
 import kcp.Ukcp;
-
-import java.net.InetSocketAddress;
 
 /**
  * 测试单连接吞吐量
+ * mbp 2.3 GHz Intel Core i9 16GRam 单连接 带fec 5W/s qps 单连接 不带fec 8W/s qps
  * Created by JinMiao
  * 2019-06-27.
  */
-public class KcpPingPongExampleClient implements KcpListener {
-
+public class KcpPingPongExampleServer implements KcpListener {
     static DefaultEventLoop logicThread = new DefaultEventLoop();
     public static void main(String[] args) {
+
+        KcpPingPongExampleServer kcpRttExampleServer = new KcpPingPongExampleServer();
         ChannelConfig channelConfig = new ChannelConfig();
         channelConfig.nodelay(true,40,2,true);
         channelConfig.setSndwnd(1024);
@@ -29,47 +28,40 @@ public class KcpPingPongExampleClient implements KcpListener {
         //channelConfig.setFecAdapt(new FecAdapt(10,3));
         channelConfig.setAckNoDelay(false);
         //channelConfig.setCrc32Check(true);
-        //channelConfig.setTimeoutMillis(10000);
-
-        KcpClient kcpClient = new KcpClient();
-        kcpClient.init(channelConfig);
-
-        KcpPingPongExampleClient kcpClientRttExample = new KcpPingPongExampleClient();
-        kcpClient.connect(new InetSocketAddress("127.0.0.1", 10001), channelConfig, kcpClientRttExample);
+        channelConfig.setTimeoutMillis(10000);
+        KcpServer kcpServer = new KcpServer();
+        kcpServer.init(kcpRttExampleServer, channelConfig, 10001);
     }
-    int i =0;
+
 
     @Override
     public void onConnected(Ukcp ukcp) {
-        for (int i = 0; i < 100; i++) {
-            ByteBuf byteBuf = UnpooledByteBufAllocator.DEFAULT.buffer(1024);
-            byteBuf.writeInt(i++);
-            byte[] bytes = new byte[1020];
-            byteBuf.writeBytes(bytes);
-            ukcp.write(byteBuf);
-            byteBuf.release();
-        }
+        System.out.println("有连接进来" + Thread.currentThread().getName() + ukcp.user().getRemoteAddress());
     }
-    int j =0;
+
+    int i = 0;
+
+    long start = System.currentTimeMillis();
 
     @Override
-    public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
-        ByteBuf newBuf = byteBuf.retainedDuplicate();
+    public void handleReceive(ByteBuf buf, Ukcp kcp) {
+        ByteBuf newBuf = buf.retainedDuplicate();
         logicThread.execute(() -> {
             try {
-                ukcp.write(newBuf);
-                newBuf.release();
-                j++;
-                if(j%100000==0){
-                    System.out.println(Snmp.snmp.toString());
-                    System.out.println("收到了 返回回去"+j);
+                i++;
+                long now = System.currentTimeMillis();
+                if(now-start>1000){
+                    System.out.println("收到消息 time: "+(now-start) +"  message :" +i);
+                    start = now;
+                    i=0;
                 }
+                kcp.write(newBuf);
+                newBuf.release();
             }catch (Exception e){
                 e.printStackTrace();
             }
 
         });
-
     }
 
     @Override
@@ -79,8 +71,8 @@ public class KcpPingPongExampleClient implements KcpListener {
 
     @Override
     public void handleClose(Ukcp kcp) {
+        System.out.println(Snmp.snmp.toString());
+        Snmp.snmp= new Snmp();
         System.out.println("连接断开了");
     }
-
-
 }

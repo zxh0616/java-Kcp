@@ -814,6 +814,9 @@ public class Kcp implements IKcp {
             }
 
             conv = data.readIntLE();
+            if (log.isDebugEnabled()) {
+                log.debug("{} [input  this.conv] {}, conv={}", this, this.conv, conv);
+            }
             if (conv != this.conv) {
                 return -4;
             }

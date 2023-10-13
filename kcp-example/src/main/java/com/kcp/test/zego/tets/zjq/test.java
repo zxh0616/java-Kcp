@@ -1,4 +1,4 @@
-package tets.zjq;
+package com.kcp.test.zego.tets.zjq;
 
 import internal.ReItrLinkedList;
 import internal.ReusableListIterator;

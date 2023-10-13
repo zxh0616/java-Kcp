@@ -1,5 +1,6 @@
-package tets.zjq;
+package com.kcp.test.zego.tets.zjq;
 
+import cn.hutool.json.JSONUtil;
 import com.backblaze.erasure.fec.Snmp;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -7,9 +8,13 @@ import kcp.ChannelConfig;
 import kcp.KcpClient;
 import kcp.KcpListener;
 import kcp.Ukcp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -22,7 +27,9 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Component
-public class KcpRttClient implements KcpListener {
+public class KcpRttClientTest implements KcpListener {
+
+    static final Logger log = LoggerFactory.getLogger(KcpRttClientTest.class);
     private final ByteBuf data;
     private final long startTime;
     private int[] rtts;
@@ -30,7 +37,7 @@ public class KcpRttClient implements KcpListener {
     private ScheduledExecutorService scheduleSrv;
     private ScheduledFuture<?> future = null;
 
-    public KcpRttClient() {
+    public KcpRttClientTest() {
         data = Unpooled.buffer(200);
         for (int i = 0; i < data.capacity(); i++) {
             data.writeByte((byte) i);
@@ -45,8 +52,6 @@ public class KcpRttClient implements KcpListener {
     }
 
     public static void main(String[] args) {
-        //for (int i = 1; i < 4 ; i++) {
-
         ChannelConfig channelConfig = new ChannelConfig();
         channelConfig.nodelay(true, 30, 2, true);
         channelConfig.setSndwnd(512);
@@ -55,9 +60,7 @@ public class KcpRttClient implements KcpListener {
         channelConfig.setAckNoDelay(true);
         channelConfig.setAckMaskSize(8);
         //channelConfig.setStream(true);
-        //channelConfig.setConv(i * 111);
-        channelConfig.setConv(111);
-
+        //channelConfig.setConv(111);
         //channelConfig.setFecAdapt(new FecAdapt(3,1));
         //channelConfig.setCrc32Check(true);
         channelConfig.setTimeoutMillis(100000);
@@ -65,90 +68,63 @@ public class KcpRttClient implements KcpListener {
         KcpClient kcpClient = new KcpClient();
         kcpClient.init(channelConfig);
 
-        KcpRttClient kcpClientRttExample = new KcpRttClient();
+        KcpRttClientTest kcpClientRttExample = new KcpRttClientTest();
         kcpClient.connect(new InetSocketAddress("127.0.0.1", 20003), channelConfig, kcpClientRttExample);
-
-
         //kcpClient.connect(new InetSocketAddress("10.60.100.191",20003),channelConfig,kcpClientRttExample);
-        //}
-
     }
 
     @Override
     public void onConnected(Ukcp ukcp) {
-        for (int i = 1; i < 600; i++) {
-            ByteBuf byteBuf = Unpooled.buffer(10);
-            byteBuf.writeShort(100);
-            byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));
-            //System.out.println("发送时间：" + (int) (System.currentTimeMillis() - startTime));
-            byteBuf.writeBytes("你好啊你好啊你好啊".getBytes());
-            ukcp.write(byteBuf);
-            byteBuf.release();
-        }
-        //future = scheduleSrv.scheduleWithFixedDelay(() -> {
-        //    if (  count++ >= 600) {
-        //        // finish
-        //        future.cancel(true);
-        //        ByteBuf byteBuf = Unpooled.buffer(10);
-        //        byteBuf.writeShort(-1);
-        //        byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));
-        //        byteBuf.writeBytes("你好啊你好啊你好啊".getBytes());
-        //        ukcp.write(byteBuf);
-        //        byteBuf.release();
-        //
-        //    }else{
-        //        //for (int i = 1; i <= 600; i++) {
-        //            //ByteBuf byteBuf = rttMsg(++count);
-        //            ByteBuf byteBuf = Unpooled.buffer(10);
-        //            byteBuf.writeShort(100);
-        //            byteBuf.writeInt((int) (System.currentTimeMillis() - startTime));
-        //            byteBuf.writeBytes("你好啊你好啊你好啊".getBytes());
-        //            ukcp.write(byteBuf);
-        //            byteBuf.release();
-        //
-        //
-        //            //ukcp.write(byteBuf);
-        //            //byteBuf.release();
-        //        //}
-        //    }
-        //}, 5, 1, TimeUnit.MILLISECONDS);
+        log.info("连接成功-onConnected, 会话ID= {}, 客户端IP={}, 服务端IP= {}", ukcp.getConv(), ukcp.user().getLocalAddress(), ukcp.user().getRemoteAddress());
+        // ■ 登录房间【IKCP_CMD_LOGIN_ROOM】 1
+        ByteBuf byteBuf = Unpooled.buffer(10);
+        byteBuf.writeShort(1);
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("roomId", "123");
+        map.put("userId", "456");
+        byteBuf.writeBytes(JSONUtil.toJsonStr(map).getBytes());
+        ukcp.write(byteBuf);
+        byteBuf.release();
     }
 
+
+    /*
+     * ■ 登录房间【IKCP_CMD_LOGIN_ROOM] 1
+     * ■ 登录房间成功【IKCP_CMD_LOGIN_ROOM_success] 11
+     * ■ 登出房间【IKCP_CMD_LOGOUT_ROOM] 2
+     * ■ 登出房间成功【IKCP_CMD_LOGOUT_ROOM_success] 22
+     *
+     * */
     @Override
-    public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
-        int curCount = byteBuf.readShort();
-        if (curCount == -1) {
-            scheduleSrv.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    int sum = 0;
-                    for (int rtt : rtts) {
-                        sum += rtt;
-                    }
-                    System.out.println("average: " + (sum / rtts.length));
-                    System.out.println(Snmp.snmp.toString());
-                    ukcp.close();
-                    //ukcp.setTimeoutMillis(System.currentTimeMillis());
-                    System.exit(0);
-                }
-            }, 3, TimeUnit.SECONDS);
-        } else {
-            int idx = curCount - 1;
-            long time = byteBuf.readInt();
-            //System.out.println("time--" + time);
+    public void handleReceive(ByteBuf buf, Ukcp ukcp) {
+        int flag = buf.readShort();
+        if (flag == 11) {
+            log.info("开始拉流推流");
+            ByteBuf buffer = Unpooled.buffer(10);
+            buffer.writeShort(2);
+            HashMap<String, String> map = new HashMap<>();
+            map.put("roomId", "123");
+            map.put("userId", "789");
+            //map.put("ts", String.valueOf(System.currentTimeMillis() -startTime));
+            map.put("data", "客户端A");
+            buffer.writeBytes(JSONUtil.toJsonStr(map).getBytes());
+            ukcp.write(buffer);
+            buffer.release();
 
-            //if (rtts[idx] != -1) {
-            //    System.out.println("???");
-            //}
-            //log.info("rcv count {} {}", curCount, System.currentTimeMillis());
-            int readableBytes = byteBuf.readableBytes();
+
+        } else if (flag == 22) {
+            int readableBytes = buf.readableBytes();
             byte[] contentBytes = new byte[readableBytes];
-            byteBuf.readBytes(contentBytes);
-            String content = new String(contentBytes);
+            buf.readBytes(contentBytes);
+            Map bean = JSONUtil.toBean(new String(contentBytes), Map.class);
+            String data = (String) bean.get("data");
+            //long ts = Long.parseLong((String) bean.get("ts"));
 
-            int rttTime = (int) (System.currentTimeMillis() - startTime - time);
-            System.out.println("rtt : " + curCount + "  " + rttTime + "---服务端返还数据：" + content);
+            //log.info("收到数据={}, 时间ts= {}", data, System.currentTimeMillis() -startTime -ts);
+            log.info("收到数据={}", data);
         }
+
     }
 
     @Override

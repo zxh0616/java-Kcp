@@ -86,6 +86,7 @@ public class Ukcp{
         this.active = true;
         this.kcpListener = kcpListener;
         this.iMessageExecutor = iMessageExecutor;
+        ;
         this.channelManager = channelManager;
         //用于在多生产者单消费者场景下进行高效的并发操作。
         this.writeBuffer = new MpscLinkedQueue<>();

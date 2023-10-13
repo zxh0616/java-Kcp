@@ -14,6 +14,16 @@ public class User {
     private InetSocketAddress remoteAddress;
     private InetSocketAddress localAddress;
 
+    /*-----------------2023.10.10  zjq--------------------*/
+    //"identity"" "对方身份：0：房主，1：加入者",
+    private String identity = "1";
+
+    private Boolean publishingFlag;
+    private String publishingStreamId;
+
+    private Boolean playingFlag;
+    private String playingStreamId;
+
     private Object cache;
 
     public void setCache(Object cache) {
@@ -46,7 +56,7 @@ public class User {
         this.remoteAddress = remoteAddress;
     }
 
-    protected InetSocketAddress getLocalAddress() {
+    public InetSocketAddress getLocalAddress() {
         return localAddress;
     }
 
@@ -54,6 +64,45 @@ public class User {
         this.localAddress = localAddress;
     }
 
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
+    }
+
+    public Boolean getPublishingFlag() {
+        return publishingFlag;
+    }
+
+    public void setPublishingFlag(Boolean publishingFlag) {
+        this.publishingFlag = publishingFlag;
+    }
+
+    public String getPublishingStreamId() {
+        return publishingStreamId;
+    }
+
+    public void setPublishingStreamId(String publishingStreamId) {
+        this.publishingStreamId = publishingStreamId;
+    }
+
+    public Boolean getPlayingFlag() {
+        return playingFlag;
+    }
+
+    public void setPlayingFlag(Boolean playingFlag) {
+        this.playingFlag = playingFlag;
+    }
+
+    public String getPlayingStreamId() {
+        return playingStreamId;
+    }
+
+    public void setPlayingStreamId(String playingStreamId) {
+        this.playingStreamId = playingStreamId;
+    }
 
     @Override
     public String toString() {
